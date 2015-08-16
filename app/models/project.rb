@@ -1,4 +1,6 @@
 class Project < ActiveRecord::Base
+  belongs_to :client
+
   # property :_id, String
   # property :client_id, String
   # property :name, String

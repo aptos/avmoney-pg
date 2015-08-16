@@ -5,6 +5,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 require 'dotenv'
+require 'database_cleaner'
 
 Dotenv.load
 ActiveRecord::Migration.maintain_test_schema!
@@ -18,20 +19,31 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
-OmniAuth.config.test_mode = true
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
 
-OmniAuth.config.mock_auth[:google] = OmniAuth::AuthHash.new({
-  :provider => 'google',
-  :info => {
-    :email => 'zoevollersen@gmail.com',
-    :name => 'Zoe Vollersen'
-  },
-  :credentials => {
-    "token" => "ya29.tgBWkugGIHHikdLmiyUSvpPB3r8wYwe_05FOwVUKyJ7szLpKI-UlaubMXneofG7TmDyT6yDi4SeYdQ",
-    "expires_at" => 1415304668,
-    "expires" => true
-  }
-  })
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
+
+  OmniAuth.config.test_mode = true
+
+  OmniAuth.config.mock_auth[:google] = OmniAuth::AuthHash.new({
+    :provider => 'google',
+    :info => {
+      :email => 'zoevollersen@gmail.com',
+      :name => 'Zoe Vollersen'
+      },
+      :credentials => {
+        "token" => "ya29.tgBWkugGIHHikdLmiyUSvpPB3r8wYwe_05FOwVUKyJ7szLpKI-UlaubMXneofG7TmDyT6yDi4SeYdQ",
+        "expires_at" => 1415304668,
+        "expires" => true
+      }
+      })
 
   # ## Mock Framework
   #

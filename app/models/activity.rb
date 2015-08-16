@@ -1,4 +1,9 @@
 class Activity < ActiveRecord::Base
+
+  belongs_to :client
+  belongs_to :project
+  belongs_to :invoice
+
   # property :_id, String
   # property :client_id, String
   # property :client_name, String

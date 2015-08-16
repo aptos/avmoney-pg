@@ -1,6 +1,11 @@
 class Client < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false, :message => "We already have client with that name"
 
+  has_many :projects
+  has_many :invoices
+  has_many :activities
+  has_many :payments
+
   # property :_id, String
   # property :name, String
   # property :rate, Float
@@ -26,22 +31,20 @@ class Client < ActiveRecord::Base
   # end
 
   def next_invoice
-    invoice_ids = Invoice.by_name.key(self.name).rows.map{|r| r["value"]}.sort
-    return base_invoice_id if invoice_ids.empty?
+    return base_invoice_id if invoices.empty?
 
-    missing = (base_invoice_id..invoice_ids.last).to_a - invoice_ids
+    missing = (base_invoice_id..invoices.last.invoice_number).to_a - invoices.collect(&:invoice_number)
     if missing.empty?
-      return invoice_ids.last + 1
+      return invoices.last.invoice_number + 1
     else
       return missing[0]
     end
   end
 
-  def invoice_stats
-    @stats = {}
-    i = Invoice.by_client_id_and_status.startkey([self._id]).endkey([self._id,{}]).reduce.group_level(2).rows
-    i.each {|r| @stats[r["key"][1]] = r["value"]}
-    @stats
-  end
+  # def invoice_stats
+  #   i = Invoice.by_client_id_and_status.startkey([self._id]).endkey([self._id,{}]).reduce.group_level(2).rows
+  #   i.each {|r| @stats[r["key"][1]] = r["value"]}
+  #   @stats
+  # end
 
 end

@@ -1,5 +1,8 @@
 class Invoice < ActiveRecord::Base
-  validates_uniqueness_of :invoice_number, scope: :client_id, :message => "This Client already has an Invoice with that number"
+  validates_uniqueness_of :invoice_number, scope: :client, :message => "This Client already has an Invoice with that number"
+
+  belongs_to :client
+  belongs_to :project
 
   # property :_id, String
   # property :invoice_number, Integer

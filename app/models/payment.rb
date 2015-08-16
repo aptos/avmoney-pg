@@ -1,4 +1,7 @@
 class Payment < ActiveRecord::Base
+  belongs_to :client
+  belongs_to :invoice
+
   # property :_id, String
   # property :invoice_id, String
   # property :client_id, String
