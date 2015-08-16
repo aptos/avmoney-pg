@@ -17,7 +17,6 @@ class SessionsController < ApplicationController
     user = User.from_omniauth(env["omniauth.auth"])
     cookies.permanent[:auth_token] = user.auth_token
 
-    user.visits += 1
     user.save!
 
     logger.info "Signin Succeeded: #{user.inspect}"

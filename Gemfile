@@ -51,7 +51,7 @@ gem 'wisepdf'
 gem 'wkhtmltopdf-binary'
 
 group :test, :development do
-	gem "rspec-rails", "~> 2.8"
+	gem "rspec-rails", "~> 2.14"
 	gem "factory_girl_rails", "~> 4.0"
 	gem 'dotenv-rails'
   gem 'guard'
