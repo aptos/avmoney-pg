@@ -8,9 +8,9 @@ class CreateActivities < ActiveRecord::Migration
       t.date :date
       t.float :hours
       t.float :rate
-      t.decimal :expense
+      t.decimal :expense, :precision => 8, :scale => 2
       t.float :tax_rate
-      t.decimal :tax_paid
+      t.decimal :tax_paid, :precision => 8, :scale => 2
       t.string :status
       t.references :invoice, index: true
     end

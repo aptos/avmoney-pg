@@ -29,4 +29,27 @@ FactoryGirl.define do
     paid_date '2015-02-01'
     paid 245.00
   end
+
+  factory :activity do
+    client_name "Fred Jones Residence"
+    notes "Pick Colors"
+    date "2015-01-01"
+    hours 1.625
+    rate 135
+  end
+
+  factory :expense, :class => 'Activity' do
+    client_name "Fred Jones Residence"
+    notes "Awesome Chair"
+    date "2015-01-01"
+    expense 500
+    tax_rate 9.5
+  end
+
+  factory :project do
+    name "Kitchen Remodel"
+    po_number "abc-1234"
+    wo_number "987"
+    cap 5000
+  end
 end

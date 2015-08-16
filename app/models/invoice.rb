@@ -80,8 +80,8 @@ class Invoice < ActiveRecord::Base
   # return map of invoice id to invoice_number
   def self.map
     invoices_map = {}
-    self.by_client['rows'].each do |r|
-      invoices_map[r['id']] = r['value']['invoice_number']
+    self.all.each do |r|
+      invoices_map[r['id']] = r['invoice_number']
     end
     invoices_map
   end

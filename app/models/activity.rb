@@ -48,7 +48,8 @@ class Activity < ActiveRecord::Base
 
 
   def self.project_summary client_id, project
-    activities = Activity.by_client_id_and_project.startkey([client_id, project]).endkey([client_id, project]).all
+    activities = Client.find(client_id).activities.where(project_id: project)
+
     if activities.empty?
       return { hours: 0, hours_amount: 0, expenses: 0, tax: 0, total: 0 }
     end
@@ -61,8 +62,7 @@ class Activity < ActiveRecord::Base
     tax = tax_paid + activities.map{|i| i['expense'] && i['tax_rate']  && (i['expense'] * i['tax_rate'] * 0.01) || 0 }.reduce(:+)
 
     total = hours_amount + expenses + tax
-
-    return { hours: hours_sum, hours_amount: hours_amount, expenses: expenses.round(2), tax: tax.round(2), total: total.round(2) }
+    return { hours: hours_sum, hours_amount: hours_amount, expenses: expenses.to_f.round(2), tax: tax.to_f.round(2), total: total.to_f.round(2) }
   end
 
 end
