@@ -10,11 +10,6 @@ class MetaController < ApplicationController
       @meta['month_select'][sprintf("%02d",index+1)] = sprintf("%02d",index+1) + "-" + item
     end
 
-    @meta['states'] = Global.states.names
-
-    if admin?
-      @meta['admin'] = true
-    end
     render :json => @meta
   end
 end

@@ -1,29 +1,29 @@
-class Client < CouchRest::Model::Base
+class Client < ActiveRecord::Base
   validates_uniqueness_of :name, :case_sensitive => false, :message => "We already have client with that name"
 
-  property :_id, String
-  property :name, String
-  property :rate, Float
-  property :tax_rate, Float
-  property :address, String
-  property :deliveries, String
-  property :contact, String
-  property :email, String
-  property :phone, String
-  property :cell, String
-  property :contact2, String
-  property :email2, String
-  property :phone2, String
-  property :cell2, String
-  property :projects, [String]
-  property :base_invoice_id, Integer, default: 1
-  property :archived_projects, [String]
-  property :archived, TrueClass, default: false
-  timestamps!
+  # property :_id, String
+  # property :name, String
+  # property :rate, Float
+  # property :tax_rate, Float
+  # property :address, String
+  # property :deliveries, String
+  # property :contact, String
+  # property :email, String
+  # property :phone, String
+  # property :cell, String
+  # property :contact2, String
+  # property :email2, String
+  # property :phone2, String
+  # property :cell2, String
+  # property :projects, [String]
+  # property :base_invoice_id, Integer, default: 1
+  # property :archived_projects, [String]
+  # property :archived, TrueClass, default: false
+  # timestamps!
 
-  design do
-    view :by_name
-  end
+  # design do
+  #   view :by_name
+  # end
 
   def next_invoice
     invoice_ids = Invoice.by_name.key(self.name).rows.map{|r| r["value"]}.sort

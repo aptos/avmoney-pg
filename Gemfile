@@ -5,6 +5,8 @@ ruby "2.0.0"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.6'
 
+gem 'pg'
+
 gem 'foreman'
 # server
 gem 'unicorn'
@@ -21,9 +23,6 @@ gem "rack-timeout"
 gem 'rack-cache'
 gem 'dalli'
 gem 'memcachier'
-
-# db is couch
-gem 'couchrest_model', '2.0.1'
 
 # static config file support
 gem 'global'
@@ -46,9 +45,6 @@ gem 'uglifier', '>= 1.3.0'
 group :production, :staging do
   gem 'rails_12factor'
 end
-
-# Application exception handler, works for both rails and javascript errors
-gem 'rollbar', '~> 0.12.17'
 
 # PDF print support
 gem 'wisepdf'

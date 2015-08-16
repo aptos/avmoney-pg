@@ -1,15 +1,17 @@
-class User < CouchRest::Model::Base
-  property :email, type: String
-  property :admin, TrueClass, :default => false, :read_only => true
-  property :provider, type: String
-  property :name, String
-  property :info, Hash
-  property :visits, Integer, default: 1
-  property :auth_token, String
-  unique_id :email
-  timestamps!
-
+class User < ActiveRecord::Base
   before_create { generate_auth_token }
+
+  # property :email, type: String
+  # property :name, String
+  # property :auth_token, String
+  # unique_id :email
+  # timestamps!
+
+  # design do
+  #   view :by_email
+  #   view :by_auth_token
+  # end
+
 
   def self.from_omniauth(auth)
     User.find(auth['info']['email']) || create_with_omniauth(auth)
@@ -19,13 +21,7 @@ class User < CouchRest::Model::Base
     create! do |user|
       user.email = auth['info']['email']
       user.name = auth['info']['name']
-      user.info = auth['info']
     end
-  end
-
-  design do
-    view :by_email
-    view :by_auth_token
   end
 
   def generate_auth_token

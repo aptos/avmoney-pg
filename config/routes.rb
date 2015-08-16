@@ -26,9 +26,6 @@ AVMoney::Application.routes.draw do
   # Special cashflow report
   get "cashflow" => 'payments#cashflow'
 
-  # S3 upload signature server
-  resources :signed_url, only: :index
-
   # serve some constants as meta
   resources :meta, only: :index
 

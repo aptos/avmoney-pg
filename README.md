@@ -16,7 +16,7 @@ Written as a single page app, the main components are:
 
  * Rails backend, as API server
  * AngularJS frontend
- * Couchdb database
+ * POSTGRES database
  * Omniauth authentication
 
 
@@ -32,9 +32,9 @@ SECRET_KEY_BASE=9febf...59164
 GOOGLE_KEY=13...-r2...apps.googleusercontent.com
 GOOGLE_SECRET=e0_rshhhveryprivate
 
-# set up an account on cloudant, the dbname is set in config/couchdb.yml
-COUCH_USER=couchuser
-COUCH_PASSWORD=password
+# set up db, update database.yml as needed
+DB_USER=couchuser
+DB_PASSWORD=password
 
 # your list of allowed users by gemail address
 ALLOWED_USERS=['a@gmail.com','b@gmail.com']

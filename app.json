@@ -15,17 +15,14 @@
     "GOOGLE_SECRET": {
       "description": "Your google apps user secret"
     },
-    "COUCH_USER": {
-      "description": "Your couchdb user name"
+    "DB_USER": {
+      "description": "Your db user name"
     },
-    "COUCH_PASSWORD": {
-      "description": "Your couchdb password"
+    "DB_PASSWORD": {
+      "description": "Your db password"
     },
     "ALLOWED_USERS": {
       "description": "Array of allowed gmail account addresses"
-      },
-    "ROLLBAR_ACCESS_TOKEN": {
-      "description": "Rollbar access token for exception alerts"
     }
   },
   "addons": [
