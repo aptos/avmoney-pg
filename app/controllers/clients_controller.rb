@@ -1,23 +1,22 @@
 class ClientsController < ApplicationController
 
   def index
-    @clients = Client.by_name.all
     if params[:active]
-      @clients.delete_if {|client| client.archived }
+      @clients = Client.where(archived: false).order(name: :asc)
+    else
+      @clients = Client.all.order(name: :asc)
     end
     render :json => @clients
   end
 
   def show
     @client = Client.find(params[:id])
-    unless @client
-      render :json => { error: "client not found: #{params[:id]}" }, :status => 404 and return
-    end
     render :json => @client
   end
 
   def create
-    @client = Client.new(params[:client])
+    binding.pry
+    @client = Client.new(client_params)
     begin
       @client.save!
     rescue Exception => e
@@ -35,7 +34,7 @@ class ClientsController < ApplicationController
     unless @client
       render :json => { error: "client not found: #{params[:id]}" }, :status => 404 and return
     end
-    @client.attributes = params[:client]
+    @client.attributes = client_params
     if @client.save!
       render :json => @client
     else
@@ -104,6 +103,12 @@ class ClientsController < ApplicationController
       render :json => { error: "client not found: #{params[:id]}" }, :status => 404 and return
     end
     render :json => @client.next_invoice
+  end
+
+  private
+
+  def client_params
+    params.require(:client).permit(:name,:rate,:tax_rate,:address,:deliveries,:contact,:email,:phone,:cell,:contact2,:email2,:phone2,:cell2,:base_invoice_id,:archived)
   end
 
 end

@@ -11,9 +11,14 @@ class ApplicationController < ActionController::Base
   rescue_from ActionController::RoutingError, with: :render_404
   rescue_from ActionController::UnknownController, with: :render_404
   rescue_from ::AbstractController::ActionNotFound, with: :render_404
+  rescue_from ActiveRecord::RecordNotFound, :with => :record_not_found
 
   def routing_error
     raise ActionController::RoutingError.new(params[:path])
+  end
+
+  def record_not_found(error)
+    render :json => {:error => error.message}, :status => :not_found
   end
 
   def render_404(exception=nil)

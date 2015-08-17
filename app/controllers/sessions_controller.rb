@@ -11,10 +11,10 @@ class SessionsController < ApplicationController
   end
 
   def create
-    unless ENV['ALLOWED_USERS'].include? env["omniauth.auth"]['info']['email']
+    unless ENV['ALLOWED_USERS'].include? request.env["omniauth.auth"]['info']['email']
       redirect_to root_url and return
     end
-    user = User.from_omniauth(env["omniauth.auth"])
+    user = User.from_omniauth(request.env["omniauth.auth"])
     cookies.permanent[:auth_token] = user.auth_token
 
     user.save!
