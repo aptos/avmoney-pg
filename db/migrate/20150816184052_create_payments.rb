@@ -7,6 +7,7 @@ class CreatePayments < ActiveRecord::Migration
       t.string :project
       t.decimal :amount, :precision => 8, :scale => 2
       t.string :notes
+      t.date :date
     end
   end
 end

@@ -30,6 +30,14 @@ FactoryGirl.define do
     paid 245.00
   end
 
+  factory :payment do
+   invoice_number 5
+   project "Pick Colors"
+   amount 250
+   notes "CK 270561"
+   date "2015-03-01"
+  end
+
   factory :activity do
     client_name "Fred Jones Residence"
     notes "Pick Colors"

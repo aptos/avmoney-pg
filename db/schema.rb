@@ -24,10 +24,10 @@ ActiveRecord::Schema.define(version: 20150816191022) do
     t.date    "date"
     t.float   "hours"
     t.float   "rate"
-    t.decimal "expense"
+    t.decimal "expense",     precision: 8, scale: 2
     t.float   "tax_rate"
-    t.decimal "tax_paid"
-    t.string  "status",      default: "Active"
+    t.decimal "tax_paid",    precision: 8, scale: 2
+    t.string  "status",                              default: "Active"
     t.integer "invoice_id"
   end
 
@@ -61,17 +61,17 @@ ActiveRecord::Schema.define(version: 20150816191022) do
     t.string  "wo_number"
     t.integer "client_id"
     t.float   "hours_sum"
-    t.decimal "hours_amount"
-    t.decimal "expenses"
+    t.decimal "hours_amount",   precision: 8, scale: 3
+    t.decimal "expenses",       precision: 8, scale: 2
     t.float   "tax"
-    t.decimal "invoice_total"
-    t.text    "activities",     default: [], array: true
+    t.decimal "invoice_total",  precision: 8, scale: 2
+    t.text    "activities",                             default: [], array: true
     t.json    "client_data"
     t.integer "project_id"
     t.string  "status"
     t.date    "open_date"
     t.date    "paid_date"
-    t.decimal "paid"
+    t.decimal "paid",           precision: 8, scale: 2
   end
 
   add_index "invoices", ["client_id"], name: "index_invoices_on_client_id", using: :btree
@@ -82,8 +82,9 @@ ActiveRecord::Schema.define(version: 20150816191022) do
     t.integer "invoice_number"
     t.integer "client_id"
     t.string  "project"
-    t.decimal "amount"
+    t.decimal "amount",         precision: 8, scale: 2
     t.string  "notes"
+    t.date    "date"
   end
 
   add_index "payments", ["client_id"], name: "index_payments_on_client_id", using: :btree
