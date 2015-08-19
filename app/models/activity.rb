@@ -49,7 +49,6 @@ class Activity < ActiveRecord::Base
 
   def self.project_summary client_id, project
     activities = Client.find(client_id).activities.where(project_id: project)
-
     if activities.empty?
       return { hours: 0, hours_amount: 0, expenses: 0, tax: 0, total: 0 }
     end

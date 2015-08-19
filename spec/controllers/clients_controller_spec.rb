@@ -51,4 +51,71 @@ describe ClientsController, :type => :controller do
       assigns(:client)['name'].should client['name']
     end
   end
+
+  describe "update" do
+    it "updates an existing client" do
+      client = FactoryGirl.create(:client)
+      post :update, {id: client.id, client: { rate: 150}}
+      assigns(:client)['rate'].should == 150
+    end
+
+    it "returns error when client not found" do
+      FactoryGirl.create(:client)
+      post :update, {id: 9999, client: { rate: 150}}
+      (JSON response.body)['error'].should eq "Couldn't find Client with 'id'=9999"
+    end
+  end
+
+  describe "destroy" do
+    it "destroys client" do
+      client = FactoryGirl.create(:client)
+      delete :destroy, id: client.id
+      (JSON response.body)['status'].should == 'Deleted'
+    end
+  end
+
+  describe "projects" do
+
+    before do
+      @client = FactoryGirl.create(:client)
+      @project = FactoryGirl.create(:project, client: @client)
+      @project2 = FactoryGirl.create(:project, client: @client, name: "Second Project")
+      FactoryGirl.create(:activity, client: @client, project: @project)
+      FactoryGirl.create(:expense, client: @client, project: @project)
+      FactoryGirl.create(:activity, client: @client, project: @project2, notes: 'More work', hours: 2.25)
+    end
+
+    it "returns all projects for a client" do
+      get :projects, id: @client.id
+      assigns(:projects).size.should == 2
+    end
+
+    describe "projects_report" do
+      it "returns activities summary by project" do
+        get :projects_report, id: @client.id
+        assigns(:projects).first['activities'].should eq({:hours=>2.25, :hours_amount=>303.75, :expenses=>0.0, :tax=>0.0, :total=>303.75})
+      end
+    end
+
+    describe "update project" do
+      it "creates new project with work order, po number and cap" do
+        post :update_project, { id: @client.id, project: { id: @project.id, name: 'groovy project', cap: 5000}}
+        assigns(:project).name.should eq 'groovy project'
+      end
+
+      it "updates existing project with work order, po number and cap" do
+        post :update_project, { id: @client.id, project: { id: @project.id, po_number: "newpo123", wo_number: "newwoABC", cap: 5000}}
+        (JSON response.body).should eq ({"id"=>@project.id, "name"=>"Kitchen Remodel", "wo_number"=>"newwoABC", "po_number"=>"newpo123", "cap"=>5000, "client_id"=>@client.id})
+      end
+    end
+  end
+
+  describe "next_invoice" do
+    it "returns next invoice for client" do
+      client = FactoryGirl.create(:client)
+      FactoryGirl.create(:invoice, client: client, invoice_number: 1)
+      get :next_invoice, id: client.id
+      response.body.should eq "2"
+    end
+  end
 end

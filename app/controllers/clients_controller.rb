@@ -15,7 +15,6 @@ class ClientsController < ApplicationController
   end
 
   def create
-    binding.pry
     @client = Client.new(client_params)
     begin
       @client.save!
@@ -49,17 +48,15 @@ class ClientsController < ApplicationController
   end
 
   def projects
-    @projects = Project.by_client_id.key(params[:id])
+    @projects = Client.find(params[:id]).projects.all
     render :json => @projects
   end
 
   def projects_report
-    client_id = params[:id]
-    @projects = Project.by_client_id.key(client_id).all.map!(&:to_hash)
+    @projects = Client.find(params[:id]).projects.all.to_a.map(&:serializable_hash)
     @projects.each do |project|
-      project['activities'] = Activity.project_summary client_id, project['name']
+      project['activities'] = Activity.project_summary params[:id], project['id']
     end
-
     if params[:format] == "csv"
       report = @projects.map{|p| [p['wo_number'], p['name'], p['cap'], p['activities'][:total]]}
       report.unshift ['work order', 'name', 'cap', 'total']
@@ -71,27 +68,22 @@ class ClientsController < ApplicationController
   end
 
   def update_project
-    params[:wo_number] || params[:wo_number] = nil
-    params[:po_number] || params[:po_number] = nil
-    params[:cap] || params[:cap] = 0
-    if params[:_id]
-      @project = Project.find(params[:_id])
+    project_params['wo_number'] || project_params['wo_number'] = nil
+    project_params['po_number'] || project_params['po_number'] = nil
+    project_params['cap'] || params['cap'] = 0
+    if params[:project][:id]
+      @project = Project.find(params[:project][:id])
       unless @project
-        render :json => { error: "project not found: #{params[:_id]}" }, :status => 404 and return
+        render :json => { error: "project not found: #{params[:project][:id]}" }, :status => 404 and return
       end
-      @project.update_attributes({
-        name: params[:name],
-        wo_number: params[:wo_number],
-        po_number: params[:po_number],
-        cap: params[:cap]
-        })
+      @project.update_attributes(project_params)
     else
       @project = Project.create({
         client_id: params[:id],
-        name: params[:name],
-        wo_number: params[:wo_number],
-        po_number: params[:po_number],
-        cap: params[:cap]
+        name: project_params[:name],
+        wo_number: project_params[:wo_number],
+        po_number: project_params[:po_number],
+        cap: project_params[:cap]
         })
     end
     render :json => @project
@@ -108,7 +100,11 @@ class ClientsController < ApplicationController
   private
 
   def client_params
-    params.require(:client).permit(:name,:rate,:tax_rate,:address,:deliveries,:contact,:email,:phone,:cell,:contact2,:email2,:phone2,:cell2,:base_invoice_id,:archived)
+    params.require(:client).permit(:name,:rate,:tax_rate,:address,:deliveries,:contact,:email,:phone,:cell,:contact2,:email2,:phone2,:cell2,:base_invoice_id,:archived, :activities)
+  end
+
+  def project_params
+    params.require(:project).permit(:id, :client_id, :project_id, :name, :wo_number, :po_number, :cap)
   end
 
 end
