@@ -129,7 +129,7 @@ function ActivitiesCtrl($scope, $rootScope, $routeParams, $filter, ngDialog, Res
   // Fetch activities
   $scope.refresh = function () {
     if (!$scope.client) return;
-    Restangular.all('activities').getList({client: $scope.client}).then( function (list) {
+    Restangular.all('activities').getList({client_id: $scope.client}).then( function (list) {
       $scope.activities = list;
     });
   };

@@ -2,30 +2,28 @@ class ActivitiesController < ApplicationController
 
   def index
     if params[:status] && params[:client_id]
-      @activities = Activity.by_client_id_and_status.key([params[:client_id],params[:status]]).all
-    elsif params[:client]
-      @activities = Activity.by_client_id.key(params[:client]).all
+      @activities = Activity.where(client_id: params[:client_id],status: params[:status]).all
+    elsif params[:client_id]
+      @activities = Activity.where(client_id: params[:client_id]).all
     else
-      @activities = Activity.summary
+      @activities = Activity.all
     end
 
     if params[:project]
       @activities = @activities.select {|activity| activity["project"] == params[:project]}
     end
-
     if params[:format] == "csv"
       invoices_map = Invoice.map
-
-      rows = Activity.summary['rows']
+      rows = Activity.all.to_a.map(&:serializable_hash)
       rows.each do |activity|
-        if activity['value'][6] != 'Active'
-          invoice_number = invoices_map[activity['value'].last]
-          activity['value'].pop
-          activity['value'].push invoice_number
+        if activity['invoice_id']
+          activity['invoice_number'] = invoices_map[activity['invoice_id']]
         end
       end
-      @activities = rows.map{|a| a['value']}
-      @activities.unshift ['date', 'client name', 'project', 'notes', 'hours', 'expense', 'status', 'invoice number']
+
+      cols = { date:'date', client_name:'client name', project_id:'project', notes:'notes', hours:'hours', expense:'expense', status:'status', invoice_number:'invoice number'}
+      @activities = rows.map{|activity| cols.keys.map{|col| activity[col.to_s]}}
+      @activities.unshift cols.values
       render text: @activities.simple_csv
     else
       render :json => @activities
