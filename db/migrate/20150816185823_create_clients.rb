@@ -14,7 +14,7 @@ class CreateClients < ActiveRecord::Migration
       t.string :email2
       t.string :phone2
       t.string :cell2
-      t.text :projects, array: true, default: []
+      t.text :active_projects, array: true, default: []
       t.text :archived_projects, array: true, default: []
       t.integer :base_invoice_id
       t.boolean :archived

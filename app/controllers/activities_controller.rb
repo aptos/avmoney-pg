@@ -30,22 +30,21 @@ class ActivitiesController < ApplicationController
     end
   end
 
-  def expenses
-    @expenses = Activity.expenses
-    render :json => @expenses
-  end
-
   def show
     @activity = Activity.find(params[:id])
     unless @activity
       render :json => { error: "activity not found: #{params[:id]}" }, :status => 404 and return
     end
-    render :json => @activity
+    render :json => @activity.as_json(include: {project: {only: [:name]}})
   end
 
   def create
-    @activity = Activity.new(params[:activity])
-    update_projects params[:client_id], params[:project]
+    client = Client.find(params["client_id"])
+    @activity = client.activities.new(activity_params)
+    if params["project"]
+      @activity.project = client.find_or_create params["project"]
+    end
+
     begin
       @activity.save
     rescue Exception => e
@@ -53,20 +52,23 @@ class ActivitiesController < ApplicationController
       if e.message.include? "Conflict"
         status = 409
       end
-      render :json => { error: e.message, activity: @activity }, :status => status and return
+      render :json => { error: e.message, activity: @activity}, :status => status and return
     end
-    render :json => @activity
+
+    render :json => @activity.as_json(include: {project: {only: [:name]}})
   end
 
   def update
     @activity = Activity.find(params[:id])
-    update_projects params[:client_id], params[:project]
+    if params["project"]
+      @activity.project = @activity.client.find_or_create params['project']
+    end
     unless @activity
       render :json => { error: "activity not found: #{params[:id]}" }, :status => 404 and return
     end
-    @activity.attributes = params[:activity]
+    @activity.attributes = activity_params
     if @activity.save
-      render :json => @activity
+      render :json => @activity.as_json(include: {project: {only: [:name]}})
     else
       respond_with(@activity.errors, status: :unprocessable_entity)
     end
@@ -86,16 +88,8 @@ class ActivitiesController < ApplicationController
 
   private
 
-  def update_projects client_id, project
-    return unless client_id && !project.nil? && project.strip.length >= 1
-    logger.info "project #{project.inspect}"
-    client = Client.find(client_id)
-
-    unless client.projects.include? project
-      client.projects.push(project.strip).uniq!
-      client.save
-      Project.create({ client_id: client_id, name: project})
-    end
+  def activity_params
+    params.require(:activity).permit(:notes, :date, :hours, :rate, :expense, :tax_rate, :tax_paid, :status)
   end
 
 end

@@ -41,6 +41,19 @@ class Client < ActiveRecord::Base
     end
   end
 
+  def find_or_create project_name
+    return unless project_name.strip.length >= 1
+    if project = self.projects.where(name: project_name).first
+      return project
+    end
+
+    self.active_projects.push(project_name.strip).uniq!
+    self.save
+    project = self.projects.create({ name: project_name })
+
+    return project
+  end
+
   # def invoice_stats
   #   i = Invoice.by_client_id_and_status.startkey([self._id]).endkey([self._id,{}]).reduce.group_level(2).rows
   #   i.each {|r| @stats[r["key"][1]] = r["value"]}

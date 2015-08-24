@@ -39,7 +39,6 @@ FactoryGirl.define do
   end
 
   factory :activity do
-    client_name "Fred Jones Residence"
     notes "Pick Colors"
     date "2015-01-01"
     hours 1.625

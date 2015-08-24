@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 20150816191022) do
     t.string  "email2"
     t.string  "phone2"
     t.string  "cell2"
-    t.text    "projects",          default: [],    array: true
+    t.text    "active_projects",   default: [],    array: true
     t.text    "archived_projects", default: [],    array: true
     t.integer "base_invoice_id",   default: 1
     t.boolean "archived",          default: false
