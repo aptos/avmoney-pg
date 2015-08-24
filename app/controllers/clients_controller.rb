@@ -41,6 +41,10 @@ class ClientsController < ApplicationController
     end
   end
 
+  def activities
+    render :json => @activities
+  end
+
   def destroy
     @client = Client.find(params[:id])
     @client.destroy

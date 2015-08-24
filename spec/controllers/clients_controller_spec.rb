@@ -118,4 +118,16 @@ describe ClientsController, :type => :controller do
       response.body.should eq "2"
     end
   end
+
+  describe "activities" do
+    before do
+      @client = FactoryGirl.create(:client)
+    end
+
+    it "returns activities for a client" do
+      get :activities, id: @client.id
+      assigns(:activities).should_not be_nil
+    end
+
+  end
 end
